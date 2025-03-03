@@ -1,0 +1,57 @@
+# Ignore node_modules (dependencies)
+node_modules/
+
+# Ignore environment variables (secrets & API keys)
+.env
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+
+# Ignore logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+turbo-debug.log*
+
+# Ignore build and cache files
+build/
+dist/
+.next/
+out/
+.svelte-kit/
+.vite/
+.cache/
+coverage/
+
+# Ignore OS/system files
+.DS_Store
+Thumbs.db
+
+# Ignore editor files
+.idea/
+.vscode/
+*.swp
+
+# Ignore package manager lock files (optional)
+# If using npm, keep `package-lock.json` and ignore others.
+# If using yarn, keep `yarn.lock` and ignore others.
+# If using pnpm, keep `pnpm-lock.yaml` and ignore others.
+yarn.lock
+pnpm-lock.yaml
+node_modules/
+node_modules/
+node_modules/
+
+
+# Virtual environment
+.venv/
+venv/
+.env  # Environment variables (secrets, API keys)
+*.pyc  # Compiled Python files
+__pycache__/  # Python cache
+instance/  # Flask instance folder (contains SQLite DB in some cases)
+*.sqlite3  # SQLite database file
+*.log  # Log files
