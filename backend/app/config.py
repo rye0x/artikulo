@@ -14,5 +14,5 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
 
     # Supabase configuration
-    SUPABASE_URL = os.getenv('SUPABASE_URL', 'https://zqtvmeomsnsiezevmehm.supabase.co')
+    SUPABASE_URL = os.getenv('SUPABASE_URL')
     SUPABASE_KEY = os.getenv('SUPABASE_KEY')
