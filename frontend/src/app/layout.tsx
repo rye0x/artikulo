@@ -1,16 +1,13 @@
-import { Geist_Sans, Geist_Mono } from "next/font/google";
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
 import "./globals.css";
-import Navbar from "@/components/navbar";
+import type { Metadata } from 'next'
+import { ThemeProvider } from "@/components/theme-provider"
 
-const geistSans = Geist_Sans({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
-
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono",
-});
+export const metadata: Metadata = {
+  title: 'Blog Site',
+  description: 'A modern blog site built with Next.js',
+};
 
 export default function RootLayout({
   children,
@@ -18,10 +15,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
-        <Navbar />
+    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
+      <body className="font-sans">
+      <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
         <main className="container py-8">{children}</main>
+        </ThemeProvider>
       </body>
     </html>
   );

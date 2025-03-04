@@ -3,231 +3,201 @@
 import * as React from "react";
 import Link from "next/link";
 
-
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { MenuIcon, MoonIcon, SunIcon } from "lucide-react";
+import { MenuIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function Navbar() {
-  const [theme, setTheme] = React.useState<"light" | "dark">("light");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-    // You can add proper theme implementation with next-themes
-    document.documentElement.classList.toggle("dark");
-  };
-
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+    <header className="sticky top-0 z-50 w-full bg-background py-3">
+      <div className="container flex items-center justify-between">
         {/* Logo & Brand */}
-        <div className="flex items-center gap-2">
-          <Link href="/" className="font-bold text-xl">
-            Blog Site
+        <div className="flex items-center">
+          <Link href="/" className="font-bold text-lg tracking-tight">
+            arkitect™
           </Link>
         </div>
 
-        {/* Desktop Navigation */}
-        <NavigationMenu className="hidden md:flex">
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <Link href="/" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Home
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Categories</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <div className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2">
-                  {categories.map((category) => (
-                    <Link
-                      key={category.title}
-                      href={category.href}
-                      className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    >
-                      <div className="text-sm font-medium leading-none">{category.title}</div>
-                      <div className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                        {category.description}
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link href="/about" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  About
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link href="/contact" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Contact
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
+        {/* Center Navigation - Rounded Black Background */}
+        <div className="hidden md:block">
+          <NavigationMenu className="mx-auto">
+            <NavigationMenuList className="bg-black text-white rounded-full px-4 py-2 flex space-x-1">
+              <NavigationMenuItem>
+                <Link href="/projects" legacyBehavior passHref>
+                  <NavigationMenuLink className={cn(
+                    "px-3 py-1.5 text-sm font-medium rounded-full transition-colors hover:bg-gray-800",
+                    "focus:outline-none focus:bg-gray-800"
+                  )}>
+                    Projects
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/services" legacyBehavior passHref>
+                  <NavigationMenuLink className={cn(
+                    "px-3 py-1.5 text-sm font-medium rounded-full transition-colors hover:bg-gray-800",
+                    "focus:outline-none focus:bg-gray-800"
+                  )}>
+                    Services
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/about" legacyBehavior passHref>
+                  <NavigationMenuLink className={cn(
+                    "px-3 py-1.5 text-sm font-medium rounded-full transition-colors hover:bg-gray-800",
+                    "focus:outline-none focus:bg-gray-800"
+                  )}>
+                    About
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/pages" legacyBehavior passHref>
+                  <NavigationMenuLink className={cn(
+                    "px-3 py-1.5 text-sm font-medium rounded-full transition-colors hover:bg-gray-800",
+                    "focus:outline-none focus:bg-gray-800"
+                  )}>
+                    Pages
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 flex items-center justify-center bg-white text-black hover:bg-gray-200">
+                  <span className="text-sm font-bold">+</span>
+                </Button>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
 
         {/* Right Side Actions */}
-        <div className="flex items-center gap-4">
-          {/* Theme Toggle */}
-          <Button variant="ghost" size="icon" onClick={toggleTheme} className="hidden md:flex">
-            {theme === "light" ? (
-              <MoonIcon className="h-5 w-5" />
-            ) : (
-              <SunIcon className="h-5 w-5" />
-            )}
-            <span className="sr-only">Toggle theme</span>
-          </Button>
+        <div className="hidden md:flex items-center space-x-4">
+          {/* Social Icons */}
+          <Link href="/twitter" className="text-gray-700 hover:text-gray-900">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-twitter">
+              <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
+            </svg>
+          </Link>
+          <Link href="/facebook" className="text-gray-700 hover:text-gray-900">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-facebook">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+            </svg>
+          </Link>
+          <Link href="/instagram" className="text-gray-700 hover:text-gray-900">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-instagram">
+              <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+              <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+            </svg>
+          </Link>
 
-          {/* User Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="/placeholder-user.jpg" alt="User" />
-                  <AvatarFallback>U</AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end">
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">User</p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    user@example.com
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/profile">Profile</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/settings">Settings</Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/logout">Log out</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Auth Buttons */}
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" size="sm" className="rounded-full px-4">
+              Log In
+            </Button>
+            <Button variant="default" size="sm" className="rounded-full px-4 bg-black hover:bg-gray-800">
+              Get Started
+            </Button>
+          </div>
 
-          {/* Mobile Menu Toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            <MenuIcon className="h-5 w-5" />
-            <span className="sr-only">Toggle mobile menu</span>
-          </Button>
+          {/* User Avatar */}
+          <Avatar className="h-8 w-8 cursor-pointer">
+            <AvatarImage src="/placeholder-user.jpg" alt="User" />
+            <AvatarFallback>U</AvatarFallback>
+          </Avatar>
         </div>
+
+        {/* Mobile Menu Toggle */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          <MenuIcon className="h-5 w-5" />
+          <span className="sr-only">Toggle mobile menu</span>
+        </Button>
       </div>
 
       {/* Mobile Navigation */}
       {isMobileMenuOpen && (
         <div className="container py-4 md:hidden">
           <nav className="flex flex-col space-y-4">
-            <Link href="/"
+            <Link href="/projects"
               className="px-2 py-1 text-lg hover:bg-accent rounded-md transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Home
+              Projects
             </Link>
             <Separator />
-            {categories.map((category) => (
-              <Link
-                key={category.title}
-                href={category.href}
-                className="px-2 py-1 hover:bg-accent rounded-md transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {category.title}
-              </Link>
-            ))}
-            <Separator />
+            <Link href="/services"
+              className="px-2 py-1 text-lg hover:bg-accent rounded-md transition-colors"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Services
+            </Link>
             <Link href="/about"
-              className="px-2 py-1 hover:bg-accent rounded-md transition-colors"
+              className="px-2 py-1 text-lg hover:bg-accent rounded-md transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               About
             </Link>
-            <Link href="/contact"
-              className="px-2 py-1 hover:bg-accent rounded-md transition-colors"
+            <Link href="/pages"
+              className="px-2 py-1 text-lg hover:bg-accent rounded-md transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Contact
+              Pages
             </Link>
             <Separator />
-            <Button variant="outline" onClick={toggleTheme} className="justify-start">
-              {theme === "light" ? (
-                <>
-                  <MoonIcon className="mr-2 h-4 w-4" />
-                  Dark Mode
-                </>
-              ) : (
-                <>
-                  <SunIcon className="mr-2 h-4 w-4" />
-                  Light Mode
-                </>
-              )}
-            </Button>
+
+            {/* Mobile Auth Buttons */}
+            <div className="flex flex-col space-y-2 pt-2">
+              <Button variant="outline" className="justify-center rounded-full">
+                Log In
+              </Button>
+              <Button variant="default" className="justify-center rounded-full bg-black hover:bg-gray-800">
+                Get Started
+              </Button>
+            </div>
+
+            <Separator />
+
+            {/* Mobile Social Icons */}
+            <div className="flex space-x-4 pt-2">
+              <Link href="/twitter" className="text-gray-700 hover:text-gray-900">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-twitter">
+                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
+                </svg>
+              </Link>
+              <Link href="/facebook" className="text-gray-700 hover:text-gray-900">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-facebook">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                </svg>
+              </Link>
+              <Link href="/instagram" className="text-gray-700 hover:text-gray-900">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-instagram">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                </svg>
+              </Link>
+            </div>
           </nav>
         </div>
       )}
     </header>
   );
 }
-
-const categories = [
-  {
-    title: "Technology",
-    description: "Explore the latest tech trends, news, and innovations.",
-    href: "/category/technology",
-  },
-  {
-    title: "Science",
-    description: "Discover scientific breakthroughs and research.",
-    href: "/category/science",
-  },
-  {
-    title: "Health",
-    description: "Articles on wellness, fitness, and medical research.",
-    href: "/category/health",
-  },
-  {
-    title: "Travel",
-    description: "Guides, tips, and stories from around the world.",
-    href: "/category/travel",
-  },
-];
-
-export default Navbar;
