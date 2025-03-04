@@ -4,7 +4,6 @@ Database:
 - Implement database migrations and seed data.
 - We will use Supabase, Postgresql as the database.
 - Consider the profile or accounts of the users.
-- 
 
 API:
 - Develop REST APIs for CRUD operations
