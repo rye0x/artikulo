@@ -1,5 +1,7 @@
 export default function landingPage() {
-return(
-    <h1></h1>
-)
+    return(
+        <div>
+            <h1>Landing Page</h1>
+        </div>
+    )
 }

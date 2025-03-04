@@ -87,7 +87,7 @@ export function Navbar() {
               </Button>
             </Link>
             <Link href="/login">
-              <Button variant="default" size="sm" className="rounded-full px-3 h-8 text-sm font-medium bg-black/90 hover:bg-gray-800/90 text-white shadow-sm">
+              <Button variant="default" size="sm" className="rounded-full px-3 h-8 text-sm font-medium bg-black hover:bg-gray-800/90 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-black shadow-sm">
                 Get Started
               </Button>
             </Link>
