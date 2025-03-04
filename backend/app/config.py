@@ -1,0 +1,15 @@
+import os
+from dotenv import load_dotenv
+from datetime import timedelta
+
+load_dotenv()
+
+class Config:
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://postgres:password@localhost:5432/blogsite')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'super-secret-key')
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
+
+    # Supabase configuration
+    SUPABASE_URL = os.getenv('SUPABASE_URL', '')
+    SUPABASE_KEY = os.getenv('SUPABASE_KEY', '')
