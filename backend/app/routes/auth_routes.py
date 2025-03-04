@@ -13,6 +13,7 @@ def login():
     return jsonify(login_user(request.get_json()))
 
 @auth_bp.route('/profile', methods=['GET'])
+
 @jwt_required()
 def profile():
     user_id = get_jwt_identity()
