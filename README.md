@@ -1,68 +1,75 @@
-# Backend
+# Artikulo Blog Platform
 
-Database:
-- Create a database schema for blog posts.
-- Use Flask, and SQLAlchemy
-- Use PostgreSQL as the database with pgAdmin/BeeKeeper Studio for database management
-- Consider the profile or accounts of the users.
+A full-stack blog platform built with Flask (backend) and Next.js (frontend). The backend uses PostgreSQL with SQLAlchemy and JWT authentication, while the frontend is styled with TailwindCSS and ShadCN.
 
-API:
-- Develop REST APIs for CRUD operations
-- Implement error handling and validation.
+## Folder Structure
 
-## Setup Instructions
+### Backend (Flask + PostgreSQL)
+```
+backend/
+├── migrations/              # (Empty for now) Database migration files
+├── app/
+│   ├── routes/             # API route handlers
+│   ├── services/           # Business logic services
+│   ├── __init__.py         # App initialization
+│   ├── config.py           # Configuration settings
+│   ├── extensions.py       # Flask extensions setup
+│   ├── models.py           # Database models (SQLAlchemy)
+│   ├── main.py             # Entry point for the backend
+├── venv/                   # Virtual environment (ignored in Git)
+├── requirements.txt        # Python dependencies
+├── .env                    # Environment variables
+```
+
+### Frontend (Next.js + TailwindCSS + ShadCN)
+```
+frontend/
+├── app/
+│   ├── blog/               # Blog page components
+│   ├── landing/            # Landing page components
+│   ├── login/              # Login page components
+│   ├── register/           # Register page components
+│   ├── global.css          # Global styles
+│   ├── layout.tsx          # App layout wrapper
+│   ├── page.tsx            # Main entry page
+├── context/                # Global state management
+├── hooks/                  # Custom React hooks
+├── lib/                    # Utility functions
+├── services/               # API service calls
+├── public/                 # Static assets
+├── .env.local              # Environment variables
+├── package.json            # Frontend dependencies
+```
+
+---
+
+## Backend Setup
 
 ### Prerequisites
-- Python 3.8+
-- PostgreSQL database
-- Beekeeper Studio or another PostgreSQL client
+- Python 3.x
+- PostgreSQL
+- Beekeeper Studio (optional for DB management)
+- Virtualenv
 
 ### Installation
+```sh
+cd backend
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
 
-1. Clone the repository
-   ```
-   git clone <repository-url>
-   cd blog-site/backend
-   ```
+### Database Setup
+```sh
+createdb artikulo
+flask db upgrade  # If migrations are set up
+```
 
-2. Set up a virtual environment
-   ```
-   python -m venv .venv
-   ```
-
-3. Activate the virtual environment
-   - Windows:
-     ```
-     .venv\Scripts\activate
-     ```
-   - macOS/Linux:
-     ```
-     source .venv/bin/activate
-     ```
-
-4. Install dependencies
-   ```
-   pip install -r requirements.txt
-   ```
-
-5. Create a `.env` file based on `.env.example` and update with your configuration
-   ```
-   cp .env.example .env
-   ```
-
-6. Update the `.env` file with your PostgreSQL credentials:
-   ```
-   DB_USER=postgres
-   DB_PASSWORD=your_password_here
-   DB_HOST=localhost
-   DB_PORT=5432
-   DB_NAME=artikulo
-   JWT_SECRET_KEY=your-secret-key-here
-   SUPABASE_URL=your-supabase-url
-   SUPABASE_KEY=your-supabase-key
-   ```
-
-### PostgreSQL Setup
+### Running the Server
+```sh
+flask run
+```
+## PostgreSQL Setup
 
 1. Install PostgreSQL:
    - Windows: Download and install from [postgresql.org](https://www.postgresql.org/download/windows/)
@@ -409,3 +416,54 @@ If you prefer to set up everything manually, follow these steps:
    ```
    python main.py
    ```
+
+---
+
+## Frontend Setup
+
+### Prerequisites
+- Node.js & npm/yarn
+- TailwindCSS
+
+### Installation
+```sh
+cd frontend
+npm install  # or yarn install
+```
+
+### Running the App
+```sh
+npm run dev  # or yarn dev
+```
+
+---
+
+## API Endpoints
+
+### Authentication
+| Method | Endpoint       | Description |
+|--------|--------------|-------------|
+| POST   | /auth/login   | Login user  |
+| POST   | /auth/register | Register user |
+
+### Blog Posts
+| Method | Endpoint      | Description |
+|--------|-------------|-------------|
+| GET    | /posts       | Get all posts |
+| GET    | /posts/:id   | Get post by ID |
+| POST   | /posts       | Create new post |
+| PUT    | /posts/:id   | Update a post |
+| DELETE | /posts/:id   | Delete a post |
+
+---
+
+## Future Enhancements
+- Add database migrations
+- Improve frontend UI with more ShadCN components
+- Implement user roles and permissions
+- Deploy to production (Heroku for backend, Vercel for frontend)
+
+---
+
+### Author
+**Natnat** - Developer of Artikulo Blog Platform 🚀

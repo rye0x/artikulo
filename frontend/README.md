@@ -1,38 +1,139 @@
-# Next.js Blog Site
+# Blog Site Frontend
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This frontend application connects to the Flask backend API and provides a user interface for the blog site.
 
-## Getting Started
+## Technologies Used
 
-First, run the development server:
+- React 18
+- React Router for navigation
+- Axios for API requests
+- TailwindCSS for styling
+- React Context API for state management
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Features
+
+- User authentication (login/register)
+- Blog post management (create, read, update, delete)
+- Responsive design for mobile and desktop
+- Dark/light mode toggle
+
+## Setup Instructions
+
+### Prerequisites
+
+- Node.js 16.x or higher
+- npm 8.x or higher
+- Backend API running (see backend README)
+
+### Installation
+
+1. Navigate to the frontend directory:
+   ```
+   cd blog-site/frontend
+   ```
+
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Create a `.env` file in the frontend root directory:
+   ```
+   cp .env.example .env
+   ```
+
+4. Update the `.env` file with your backend API URL:
+   ```
+   REACT_APP_API_URL=http://localhost:5000/api
+   ```
+
+### Running the Application
+
+Start the development server:
+```
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Building for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create an optimized production build:
+```
+npm run build
+```
 
-## Learn More
+The built files will be in the `build` directory.
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   - Check that frontend requests use the correct origin   - Ensure the backend has CORS properly configured3. **CORS Errors**:   - Ensure cookies are not being blocked   - Check browser console for token-related errors   - Clear localStorage and try logging in again2. **Authentication Issues**:   - Verify network connectivity   - Check that REACT_APP_API_URL is set correctly in .env   - Ensure the backend server is running1. **API Connection Errors**:### Common Issues## Troubleshooting- `npm run eject` - Eject from Create React App- `npm run build` - Build for production- `npm test` - Run tests- `npm start` - Start the development server## Available Scripts- `DELETE /api/posts/{post_id}` - Delete a post- `PUT /api/posts/{post_id}` - Update a post- `POST /api/posts` - Create a new post- `GET /api/posts/{post_id}` - Get a specific post- `GET /api/posts` - Get all posts### Blog Posts- `GET /api/auth/profile` - Get user profile- `POST /api/auth/login` - Login- `POST /api/auth/register` - Register a new user### AuthenticationThe frontend connects to these backend API endpoints:## API Integration6. Token refresh is handled automatically5. Axios interceptors include the token in API requests4. Protected routes check for the token3. Token is stored in localStorage2. Backend returns a JWT token1. User logs in or registers through the auth formsThe application uses JWT tokens for authentication:## Authentication Flow```└── index.js           # Entry point├── App.js             # Main app component├── utils/             # Utility functions├── services/          # API service functions├── pages/             # Page components├── hooks/             # Custom React hooks├── context/           # React context for state management│   └── posts/          # Blog post components│   ├── layout/         # Layout components│   ├── auth/           # Authentication related components├── components/         # Reusable UI components

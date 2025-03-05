@@ -9,16 +9,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/auth-context";
 
-export function LoginForm({
+export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const inputClasses = "border-[#0000001a] focus-visible:border-[#0000003a] focus-visible:ring-0 shadow-[0_1px_2px_rgba(0,0,0,0.04)]";
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { login, isAuthenticated } = useAuth();
+  const { register, isAuthenticated } = useAuth();
   const router = useRouter();
 
   // If already authenticated, redirect to blog page
@@ -29,21 +31,35 @@ export function LoginForm({
     }
   }, [isAuthenticated, router]);
 
+  // What does e: React.FormEvent do? Explain in detail.
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    // Validate passwords match
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    // Validate password length
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      console.log("Attempting login with:", { email, password });
-      login({ email, password });
-      console.log("Login successful, should redirect to blog");
-
+      console.log("Attempting registration with:", { username, email });
+      await register(username, email, password);
+      console.log("Registration successful, should redirect to blog");
+      
       // Force navigation to blog
       router.push("/blog");
     } catch (err) {
-      console.error("Login error:", err);
-      setError(err instanceof Error ? err.message : "Login failed. Please try again.");
+      console.error("Registration error:", err);
+      setError(err instanceof Error ? err.message : "Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -54,9 +70,9 @@ export function LoginForm({
       <div className="w-full max-w-md rounded-lg bg-card text-card-foreground shadow-[0_2px_10px_rgba(0,0,0,0.08)]">
         <div className="p-6 flex flex-col gap-6">
           <div className="space-y-1.5">
-            <h2 className="text-2xl font-semibold">Login</h2>
+            <h2 className="text-2xl font-semibold">Create an account</h2>
             <p className="text-sm text-muted-foreground">
-              Enter your email below to login to your account
+              Enter your details below to create your account
             </p>
           </div>
 
@@ -67,6 +83,19 @@ export function LoginForm({
           )}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
+            <div className="space-y-2">
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                type="text"
+                placeholder="johndoe"
+                className={inputClasses}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -81,15 +110,7 @@ export function LoginForm({
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <a
-                  href="#"
-                  className="text-sm text-primary hover:underline"
-                >
-                  Forgot your password?
-                </a>
-              </div>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -100,23 +121,35 @@ export function LoginForm({
               />
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                className={inputClasses}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+            </div>
+
             <Button
               type="submit"
               className="w-full bg-black hover:bg-gray-800/90 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100"
               disabled={isLoading}
             >
-              {isLoading ? "Logging in..." : "Login"}
+              {isLoading ? "Creating account..." : "Create account"}
             </Button>
 
             <div className="text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <Link href="/register" className="text-primary">
-                <u>Sign up</u>
+              Already have an account?{" "}
+              <Link href="/login" className="text-primary">
+                <u>Sign in</u>
               </Link>
             </div>
           </form>
         </div>
       </div>
     </div>
-  )
+  );
 }
