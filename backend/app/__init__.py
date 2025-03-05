@@ -43,19 +43,64 @@ def create_app():
 
     @jwt.expired_token_loader
     def expired_token_callback(jwt_header, jwt_payload):
-        return jsonify({'error': 'Token has expired'}), 401
+        print(f"DEBUG - Token expired. Header: {jwt_header}, Payload: {jwt_payload}")
+        logger.error(f"Token expired. Payload: {jwt_payload}")
+        return jsonify({'error': 'Token has expired', 'details': jwt_payload}), 401
 
     @jwt.invalid_token_loader
     def invalid_token_callback(error):
-        return jsonify({'error': 'Invalid token'}), 401
+        print(f"DEBUG - Invalid token error: {error}")
+        logger.error(f"Invalid token error: {error}")
+        return jsonify({'error': f'Invalid token: {error}'}), 401
 
     @jwt.unauthorized_loader
     def missing_token_callback(error):
-        return jsonify({'error': 'Authorization token is missing'}), 401
+        print(f"DEBUG - Missing token: {error}")
+        logger.error(f"Missing token: {error}")
+        return jsonify({'error': f'Authorization token is missing: {error}'}), 401
 
     # Register Blueprints
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(post_bp, url_prefix='/api/posts')
+
+    # Add a debug route to verify JWT tokens
+    @app.route('/api/debug/verify-token', methods=['POST'])
+    def verify_token():
+        from flask import request, jsonify
+        from flask_jwt_extended import decode_token
+        import traceback
+        
+        if not request.is_json:
+            return jsonify({"error": "Missing JSON in request"}), 400
+            
+        data = request.get_json()
+        if 'token' not in data:
+            return jsonify({"error": "Token is required"}), 400
+            
+        token = data['token']
+        
+        try:
+            # Try to decode the token
+            decoded = decode_token(token)
+            return jsonify({
+                "valid": True,
+                "decoded": {
+                    "identity": decoded.get('sub'),
+                    "type": decoded.get('type'),
+                    "fresh": decoded.get('fresh', False),
+                    "expires": str(decoded.get('exp')),
+                    "issued_at": str(decoded.get('iat')),
+                    "issuer": decoded.get('iss')
+                }
+            }), 200
+        except Exception as e:
+            # Return detailed error information
+            error_info = {
+                "valid": False,
+                "error": str(e),
+                "traceback": traceback.format_exc()
+            }
+            return jsonify(error_info), 400
 
     # Health check route
     @app.route('/health', methods=['GET'])
