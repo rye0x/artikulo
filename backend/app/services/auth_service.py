@@ -119,3 +119,28 @@ def login_user(data):
     except Exception as e:
         logger.error(f"Unexpected error during login: {str(e)}")
         return {'error': f'Login failed: {str(e)}'}, 500
+
+# Function to get user by ID
+def get_user_by_id(user_id):
+    try:
+        logger.info(f"Getting user by ID: {user_id}")
+        
+        # Find user by ID
+        user = User.query.get(user_id)
+        if not user:
+            logger.warning(f"User with ID {user_id} not found")
+            return {'error': 'User not found'}, 404
+            
+        # Return user data
+        return {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'created_at': user.created_at.isoformat() if user.created_at else None
+        }, 200
+    except SQLAlchemyError as e:
+        logger.error(f"Database error when getting user by ID: {str(e)}")
+        return {'error': f'Failed to get user: {str(e)}'}, 500
+    except Exception as e:
+        logger.error(f"Unexpected error when getting user by ID: {str(e)}")
+        return {'error': f'Failed to get user: {str(e)}'}, 500

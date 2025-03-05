@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify # Blueprint for authentication routes, request for getting JSON, jsonify for returning JSON
 from flask_jwt_extended import jwt_required, get_jwt_identity # Import for JWT authentication
-from ..services.auth_service import register_user, login_user # Import authentication services
+from ..services.auth_service import register_user, login_user, get_user_by_id # Import authentication services
 import logging
 
 logger = logging.getLogger(__name__)
@@ -14,14 +14,14 @@ def register():
     if not request.is_json:
         return jsonify({"error": "Missing JSON in request"}), 400 # 400 Bad Request
         # Return error if JSON is missing
-    return jsonify(register_user(request.get_json()))
+    return register_user(request.get_json())
 
 # Login route
 @auth_bp.route('/login', methods=['POST'])
 def login():
     if not request.is_json:
         return jsonify({"error": "Missing JSON in request"}), 400 # 400 Bad Request
-    return jsonify(login_user(request.get_json()))
+    return login_user(request.get_json())
 
 # Profile route
 @auth_bp.route('/profile', methods=['GET'])
@@ -39,12 +39,21 @@ def profile():
             # If conversion fails, keep original value
             user_id_int = user_id
         
-        # Return more detailed user information
+        # Get user data from database
+        user_data, status_code = get_user_by_id(user_id_int)
+        
+        if status_code != 200:
+            logger.error(f"Failed to get user data: {user_data}")
+            return jsonify({'error': 'Failed to get user profile'}), status_code
+        
+        # Return user information
         return jsonify({
-            'message': f'User ID {user_id} authenticated',
-            'user_id': user_id,
-            'timestamp': 'Profile accessed successfully'
-        }), 200 # 200 OK
+            'user': {
+                'id': user_data['id'],
+                'username': user_data['username'],
+                'email': user_data['email']
+            }
+        }), 200
     except Exception as e:
         logger.error(f"Error in profile route: {str(e)}")
         return jsonify({'error': f'Profile access failed: {str(e)}'}), 500
