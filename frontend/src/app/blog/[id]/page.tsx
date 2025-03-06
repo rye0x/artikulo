@@ -9,6 +9,7 @@ import { ArrowLeft, Clock, Edit, Trash2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/context/auth-context';
 import { 
   AlertDialog,
@@ -23,15 +24,16 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from 'sonner';
 
+// Define Post interface
 interface Post {
   id: number;
   title: string;
   content: string;
   author_id: number;
   author_name: string;
-  image_url?: string;
   created_at: string;
   updated_at?: string;
+  image_url?: string;
 }
 
 export default function PostPage({ params }: { params: { id: string } }) {
@@ -199,11 +201,13 @@ export default function PostPage({ params }: { params: { id: string } }) {
       {/* Featured Image */}
       {post.image_url && (
         <div className="rounded-lg overflow-hidden mb-12 dark:bg-gray-700">
-          <img
+          <Image
             src={post.image_url}
             alt={post.title}
             className="w-full h-auto object-cover"
             style={{ maxHeight: '500px', width: '100%' }}
+            width={1000}
+            height={500}
           />
         </div>
       )}
