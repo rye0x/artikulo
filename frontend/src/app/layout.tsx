@@ -4,11 +4,12 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/navbar";
 import { AuthProvider } from "@/context/auth-context";
+import { Toaster } from 'sonner';
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Artikulo Blog",
+  title: "Artikulo",
   description: "A modern blog platform",
 };
 
@@ -20,10 +21,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
           <AuthProvider>
             <Navbar />
             <main>{children}</main>
+            <Toaster richColors closeButton position="top-right" />
           </AuthProvider>
         </ThemeProvider>
       </body>
