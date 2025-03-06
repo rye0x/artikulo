@@ -54,17 +54,32 @@ export function RegisterForm({
       console.log("Attempting registration with:", { username, email });
       await register(username, email, password);
       console.log("Registration successful, should redirect to blog");
-      
+
       // Force navigation to blog
       router.push("/blog");
     } catch (err) {
       console.error("Registration error:", err);
-      setError(err instanceof Error ? err.message : "Registration failed. Please try again.");
+      
+      // Handle specific error messages
+      if (err instanceof Error) {
+        const errorMessage = err.message.toLowerCase();
+        
+        if (errorMessage.includes("username already exists")) {
+          setError("This username is already taken. Please choose another one.");
+        } else if (errorMessage.includes("email already exists")) {
+          setError("This email is already registered. Please use another email or try logging in.");
+        } else {
+          setError(err.message || "Registration failed. Please try again.");
+        }
+      } else {
+        setError("Registration failed. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
+  // User Interface
   return (
     <div className={cn("flex justify-center items-center", className)} {...props}>
       <div className="w-full max-w-md rounded-lg bg-card text-card-foreground shadow-[0_2px_10px_rgba(0,0,0,0.08)]">
@@ -135,7 +150,8 @@ export function RegisterForm({
 
             <Button
               type="submit"
-              className="w-full bg-black hover:bg-gray-800/90 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+              variant="default"
               disabled={isLoading}
             >
               {isLoading ? "Creating account..." : "Create account"}

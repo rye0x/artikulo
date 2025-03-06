@@ -98,3 +98,31 @@ def delete_post(post_id, user_id):
     except SQLAlchemyError as e:
         db.session.rollback()
         return {'error': f'Failed to delete post: {str(e)}'}, 500
+
+# Function to get posts by user ID
+def get_posts_by_user_id(user_id):
+    try:
+        posts = Post.query.filter_by(user_id=user_id).order_by(Post.created_at.desc()).all()
+        
+        if not posts:
+            return {'posts': []}, 200
+            
+        result = []
+        for post in posts:
+            author = User.query.get(post.user_id)
+            author_name = author.username if author else "Unknown"
+            
+            result.append({
+                'id': post.id,
+                'title': post.title,
+                'content': post.content,
+                'author_id': post.user_id,
+                'author_name': author_name,
+                'image_url': post.image_url,
+                'created_at': post.created_at.isoformat() if post.created_at else None,
+                'updated_at': post.updated_at.isoformat() if post.updated_at else None
+            })
+            
+        return {'posts': result}, 200
+    except SQLAlchemyError as e:
+        return {'error': f'Database error: {str(e)}'}, 500
