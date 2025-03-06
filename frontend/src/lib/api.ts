@@ -214,8 +214,34 @@ export async function updatePost(token: string, id: string, postData: { title?: 
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Failed to update post');
+    let errorMessage = 'Failed to update post';
+    
+    try {
+      const errorData = await response.json();
+      
+      if (response.status === 403) {
+        errorMessage = 'You do not have permission to update this post';
+      } else {
+        errorMessage = errorData.error || errorData.message || errorMessage;
+      }
+      
+      console.error('Update post error details:', errorData);
+    } catch (e) {
+      // If response is not JSON, try to get text
+      try {
+        const errorText = await response.text();
+        if (errorText) errorMessage = errorText;
+      } catch {
+        // If we can't get text either, use status code based message
+        if (response.status === 403) {
+          errorMessage = 'You do not have permission to update this post';
+        } else if (response.status === 404) {
+          errorMessage = 'Post not found';
+        }
+      }
+    }
+    
+    throw new Error(errorMessage);
   }
 
   return await response.json();
@@ -231,8 +257,34 @@ export async function deletePost(token: string, id: string) {
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Failed to delete post');
+    let errorMessage = 'Failed to delete post';
+    
+    try {
+      const errorData = await response.json();
+      
+      if (response.status === 403) {
+        errorMessage = 'You do not have permission to delete this post';
+      } else {
+        errorMessage = errorData.error || errorData.message || errorMessage;
+      }
+      
+      console.error('Delete post error details:', errorData);
+    } catch (e) {
+      // If response is not JSON, try to get text
+      try {
+        const errorText = await response.text();
+        if (errorText) errorMessage = errorText;
+      } catch {
+        // If we can't get text either, use status code based message
+        if (response.status === 403) {
+          errorMessage = 'You do not have permission to delete this post';
+        } else if (response.status === 404) {
+          errorMessage = 'Post not found';
+        }
+      }
+    }
+    
+    throw new Error(errorMessage);
   }
 
   return await response.json();

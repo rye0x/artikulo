@@ -85,7 +85,13 @@ def update_existing_post(post_id):
 @jwt_required()
 def remove_post(post_id):
     user_id = get_jwt_identity()
-    result, status_code = delete_post(post_id, user_id)
+    try:
+        user_id_int = int(user_id)
+    except (ValueError, TypeError):
+        logger.error(f"Could not convert user_id to integer: {user_id}")
+        return jsonify({"error": "Invalid user ID format"}), 400
+    
+    result, status_code = delete_post(post_id, user_id_int)
     return jsonify(result), status_code
 
 # Route to get posts by user ID
@@ -99,5 +105,11 @@ def get_user_posts(user_id):
 @jwt_required()
 def get_my_posts():
     user_id = get_jwt_identity()
-    result, status_code = get_posts_by_user_id(user_id)
+    try:
+        user_id_int = int(user_id)
+    except (ValueError, TypeError):
+        logger.error(f"Could not convert user_id to integer: {user_id}")
+        return jsonify({"error": "Invalid user ID format"}), 400
+    
+    result, status_code = get_posts_by_user_id(user_id_int)
     return jsonify(result), status_code
