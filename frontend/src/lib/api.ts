@@ -41,33 +41,50 @@ export async function loginUser(credentials: LoginCredentials) {
 }
 
 export async function registerUser(userData: { username: string; email: string; password: string }) {
-  const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(userData),
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
 
-  if (!response.ok) {
-    let errorMessage = 'Failed to register';
-    try {
-      const errorData = await response.json();
-      errorMessage = errorData.error || errorData.message || errorMessage;
-      console.error('Registration error details:', errorData);
-    } catch (e) {
-      // If response is not JSON, try to get text
+    if (!response.ok) {
+      let errorMessage = 'Failed to register';
       try {
-        const errorText = await response.text();
-        if (errorText) errorMessage = errorText;
-      } catch {
-        // If we can't get text either, use default error message
+        const errorData = await response.json();
+        // Check for specific error messages from the backend
+        if (errorData.error) {
+          errorMessage = errorData.error;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+        
+        // Log the full error details for debugging
+        console.error('Registration error details:', errorData);
+      } catch (e) {
+        // If response is not JSON, try to get text
+        try {
+          const errorText = await response.text();
+          if (errorText) errorMessage = errorText;
+        } catch {
+          // If we can't get text either, use status code based message
+          if (response.status === 409) {
+            errorMessage = 'Username or email already exists';
+          } else if (response.status === 400) {
+            errorMessage = 'Invalid registration data';
+          }
+        }
       }
+      throw new Error(errorMessage);
     }
-    throw new Error(errorMessage);
-  }
 
-  return await response.json();
+    return await response.json();
+  } catch (error) {
+    console.error('Error in registerUser API call:', error);
+    throw error;
+  }
 }
 
 export async function getUserProfile(token: string) {
