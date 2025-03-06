@@ -7,38 +7,31 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Send } from "lucide-react";
-import { Metadata } from "next";
-import { ProtectedRoute } from "@/components/protected-route";
-
-export const metadata: Metadata = {
-  title: "Create Blog Post",
-  description: "Create a new blog post",
-};
+import { AlertCircle, Image as ImageIcon, Bold, Italic, Link as LinkIcon, List, ListOrdered, Quote } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { createPost } from '@/lib/api';
+import  ProtectedRoute  from "@/components/protected-route";
 
 export default function CreateBlogPage() {
+// TODO: Implment Zustand state management
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
 
   // Check authentication on page load
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated && !loading) {
+      console.log('Not authenticated, redirecting to login');
       router.push('/login');
+    } else if (isAuthenticated) {
+      console.log('Authenticated as:', user);
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, loading, router, user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,100 +39,183 @@ export default function CreateBlogPage() {
     setError('');
 
     try {
+      // Check if user is authenticated
+      if (!isAuthenticated) {
+        console.error('User not authenticated');
+        setError('You must be logged in to create a post');
+        router.push('/login');
+        return;
+      }
+
+      // Get token from localStorage
       const token = localStorage.getItem('auth_token');
 
       if (!token) {
-        throw new Error('Authentication required');
+        console.error('No auth token found in localStorage');
+        setError('Authentication required. Please log in again.');
+        router.push('/login');
+        return;
       }
 
-      const response = await fetch('/api/blog/posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ title, content }),
-      });
+      console.log('Creating post with token:', token.substring(0, 10) + '...');
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create post');
-      }
+      const postData = {
+        title,
+        content,
+        ...(imageUrl && { image_url: imageUrl }),
+      };
 
-      // Redirect to the blog list or new post
+      console.log('Post data:', postData);
+
+      const result = await createPost(token, postData);
+      console.log('Post created successfully:', result);
       router.push('/blog');
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred while creating the post';
-      setError(errorMessage);
+    } catch (error: unknown) {
+      console.error('Error creating post:', error);
+
+      if (error instanceof Error) {
+        const errorMessage = error.message.toLowerCase();
+
+        if (
+          errorMessage.includes('token') ||
+          errorMessage.includes('auth') ||
+          errorMessage.includes('unauthorized')
+        ) {
+          setError('Authentication error. Please log in again.');
+          localStorage.removeItem('auth_token'); // Clear invalid token
+          setTimeout(() => router.push('/login'), 2000);
+        } else {
+          setError(error.message || 'Failed to create post. Please try again.');
+        }
+      } else {
+        setError('An unknown error occurred. Please try again.');
+      }
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Ensure loading state is reset
     }
   };
 
+  if (loading) {
+    return <div className="flex justify-center items-center h-full">Loading...</div>;
+  }
+
   // If not authenticated, don't render the form
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !loading) {
     return null; // This prevents flash of content before redirect
   }
 
   return (
     <ProtectedRoute>
-      <div className="container mx-auto py-8 px-4">
-        <Card className="bg-white dark:bg-gray-900 shadow-lg">
-          <CardHeader className="pb-6">
-            <CardTitle className="text-2xl font-bold">Create New Blog Post</CardTitle>
-            <CardDescription>
-              Share your thoughts, ideas, and knowledge with the world
-            </CardDescription>
-          </CardHeader>
+      <div className="max-w-4xl mx-auto py-10 px-4">
+        {/* Medium-like Editor Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.back()}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              Cancel
+            </Button>
+          </div>
+          <div>
+            <Button
+              onClick={handleSubmit}
+              disabled={isLoading || !title || !content}
+              className="rounded-full px-4"
+            >
+              {isLoading ? "Publishing..." : "Publish"}
+            </Button>
+          </div>
+        </div>
 
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-              <span className="block sm:inline">{error}</span>
+        {error && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Title Input - Medium Style */}
+          <div>
+            <Input
+              id="title"
+              name="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Title"
+              className="text-3xl font-bold border-none px-0 focus-visible:ring-0 placeholder:text-gray-400"
+              required
+            />
+          </div>
+
+          {/* Optional Featured Image */}
+          <div className="space-y-2">
+            <div className="flex items-center space-x-2">
+              <ImageIcon className="h-5 w-5 text-gray-500" />
+              <Label htmlFor="imageUrl" className="text-sm font-medium">
+                Featured Image URL (optional)
+              </Label>
             </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6 px-6">
-            <CardContent className="space-y-6">
-              <div className="space-y-3">
-                <Label htmlFor="title" className="text-sm font-medium">Title</Label>
-                <Input
-                  id="title"
-                  name="title"
-                  placeholder="Enter a catchy title for your article"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="text-lg font-medium"
-                  required
+            <Input
+              id="imageUrl"
+              name="imageUrl"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              placeholder="https://example.com/image.jpg"
+              className="text-sm"
+            />
+            {imageUrl && (
+              <div className="mt-2 relative aspect-video w-full overflow-hidden rounded-lg border bg-muted">
+                <img
+                  src={imageUrl}
+                  alt="Featured"
+                  className="h-full w-full object-cover"
+                  onError={() => setError('Invalid image URL')}
                 />
               </div>
+            )}
+          </div>
 
-              <Separator className="my-6" />
+          {/* Formatting Toolbar - Medium Style */}
+          <div className="flex items-center space-x-1 border-t border-b py-2">
+            <Button variant="ghost" size="sm" type="button" className="rounded-full h-8 w-8 p-0">
+              <Bold className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" type="button" className="rounded-full h-8 w-8 p-0">
+              <Italic className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" type="button" className="rounded-full h-8 w-8 p-0">
+              <LinkIcon className="h-4 w-4" />
+            </Button>
+            <Separator orientation="vertical" className="h-6 mx-1" />
+            <Button variant="ghost" size="sm" type="button" className="rounded-full h-8 w-8 p-0">
+              <List className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" type="button" className="rounded-full h-8 w-8 p-0">
+              <ListOrdered className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" type="button" className="rounded-full h-8 w-8 p-0">
+              <Quote className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" type="button" className="rounded-full h-8 w-8 p-0">
+              <ImageIcon className="h-4 w-4" />
+            </Button>
+          </div>
 
-              <div className="space-y-3">
-                <Label htmlFor="content" className="text-sm font-medium">Content</Label>
-                <Textarea
-                  id="content"
-                  name="content"
-                  placeholder="Start writing your article here..."
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  className="min-h-[300px] resize-y"
-                  required
-                />
-              </div>
-            </CardContent>
-
-            <CardFooter className="flex justify-between px-6 py-6">
-              <Button variant="outline" type="button" onClick={() => router.back()}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isLoading} className="gap-2">
-                <Send className="h-4 w-4" />
-                {isLoading ? "Creating..." : "Create Post"}
-              </Button>
-            </CardFooter>
-          </form>
-        </Card>
+          {/* Content Textarea - Medium Style */}
+          <Textarea
+            id="content"
+            name="content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Tell your story..."
+            className="min-h-[400px] resize-none text-lg border-none px-0 focus-visible:ring-0 placeholder:text-gray-400"
+            required
+          />
+        </form>
       </div>
     </ProtectedRoute>
   );
