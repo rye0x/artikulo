@@ -9,9 +9,9 @@ import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Clock, Edit, Trash2, Plus } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Loader2 } from 'lucide-react';
-import Link from 'next/link';
+
 import { useAuth } from '@/context/auth-context';
-import { 
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -20,7 +20,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from 'sonner';
 
@@ -37,7 +36,7 @@ interface Post {
 
 export default function MyPostsPage() {
   const router = useRouter();
-  const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -60,10 +59,10 @@ export default function MyPostsPage() {
       try {
         setLoading(true);
         setError(null);
-        
+
         const token = localStorage.getItem('auth_token');
         if (!token) throw new Error('Authentication token not found');
-        
+
         const data = await getMyPosts(token);
         console.log('Fetched posts data:', data);
         setPosts(data.posts || []);
@@ -89,18 +88,18 @@ export default function MyPostsPage() {
 
   const handleDelete = async () => {
     if (!postToDelete) return;
-    
+
     try {
       setDeletingPostId(postToDelete.id);
       const token = localStorage.getItem('auth_token');
       if (!token) throw new Error('Authentication token not found');
-      
+
       await deletePost(token, postToDelete.id.toString());
-      
+
       toast.success("Post deleted", {
         description: "The post has been successfully deleted"
       });
-      
+
       // Remove the deleted post from the list
       setPosts(posts.filter(post => post.id !== postToDelete.id));
     } catch (err) {
@@ -144,9 +143,9 @@ export default function MyPostsPage() {
     <div className="container mx-auto px-4 py-8 max-w-5xl">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center">
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={handleBack}
             className="mr-2"
           >
@@ -154,7 +153,7 @@ export default function MyPostsPage() {
           </Button>
           <h1 className="text-3xl font-bold">My Posts</h1>
         </div>
-        <Button 
+        <Button
           onClick={() => router.push('/blog/create')}
           className="bg-primary hover:bg-primary/90 text-white"
         >
@@ -178,9 +177,9 @@ export default function MyPostsPage() {
         </div>
       ) : posts.length === 0 ? (
         <div className="text-center py-12">
-          <h2 className="text-xl font-semibold mb-2">You haven't created any posts yet</h2>
+          <h2 className="text-xl font-semibold mb-2">You havent created any posts yet</h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">Start sharing your thoughts with the world!</p>
-          <Button 
+          <Button
             onClick={() => router.push('/blog/create')}
             className="bg-primary hover:bg-primary/90 text-white"
           >
@@ -200,36 +199,36 @@ export default function MyPostsPage() {
                   <span>{formatDate(post.created_at)}</span>
                 </div>
               </CardHeader>
-              
+
               <CardContent className="pt-2">
                 <div className="text-gray-600 dark:text-gray-300 mb-4">
                   {truncateContent(post.content)}
                 </div>
-                
+
                 {post.image_url && (
                   <div className="relative h-40 w-full mb-4 overflow-hidden rounded-md">
-                    <img 
-                      src={post.image_url} 
-                      alt={post.title} 
+                    <img
+                      src={post.image_url}
+                      alt={post.title}
                       className="object-cover w-full h-full"
                     />
                   </div>
                 )}
               </CardContent>
-              
+
               <CardFooter className="flex justify-end space-x-2 pt-2 border-t border-gray-100 dark:border-gray-700">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => router.push(`/blog/edit/${post.id}`)}
                   className="text-blue-600 border-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-400 dark:hover:bg-blue-950"
                 >
                   <Edit className="h-4 w-4 mr-1" /> Edit
                 </Button>
-                
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => confirmDelete(post)}
                   className="text-red-600 border-red-600 hover:bg-red-50 dark:text-red-400 dark:border-red-400 dark:hover:bg-red-950"
                   disabled={deletingPostId === post.id}
@@ -260,7 +259,7 @@ export default function MyPostsPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={handleDelete}
               className="bg-red-600 hover:bg-red-700 text-white"
             >
