@@ -59,18 +59,21 @@ export function RegisterForm({
       router.push("/blog");
     } catch (err) {
       console.error("Registration error:", err);
-      
+
       // Handle specific error messages
       if (err instanceof Error) {
         const errorMessage = err.message.toLowerCase();
-        
+
         if (errorMessage.includes("username already exists")) {
           setError("This username is already taken. Please choose another one.");
+
         } else if (errorMessage.includes("email already exists")) {
           setError("This email is already registered. Please use another email or try logging in.");
+
         } else if (errorMessage.includes("already exists")) {
           // Generic "already exists" error that might be related to username or email
           setError("An account with this username or email already exists. Please try another or login.");
+
         } else {
           setError(err.message || "Registration failed. Please try again.");
         }

@@ -11,10 +11,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/context/auth-context';
 import { LoginCredentials } from '@/lib/api';
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+export function LoginForm({className,...props}:
+  React.ComponentPropsWithoutRef<"div">) {
   const [credentials, setCredentials] = useState<LoginCredentials>({
     email: '',
     password: '',

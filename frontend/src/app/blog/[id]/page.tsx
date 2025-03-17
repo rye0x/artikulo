@@ -4,14 +4,14 @@ import React, { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { getPostById, deletePost } from '@/lib/api';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+mport { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Clock, Edit, Trash2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/context/auth-context';
-import { 
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -43,7 +43,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  
+
   // Unwrap params using React.use()
   const unwrappedParams = use(params);
   const postId = unwrappedParams.id;
@@ -81,18 +81,18 @@ export default function PostPage({ params }: { params: { id: string } }) {
       });
       return;
     }
-    
+
     try {
       setIsDeleting(true);
       const token = localStorage.getItem('auth_token');
       if (!token) throw new Error('Authentication token not found');
-      
+
       await deletePost(token, postId);
-      
+
       toast.success("Post deleted", {
         description: "The post has been successfully deleted"
       });
-      
+
       router.push('/blog');
     } catch (err) {
       console.error('Error deleting post:', err);

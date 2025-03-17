@@ -1,6 +1,6 @@
 export default function landingPage() {
     return(
-        <div>
+        <div className="">
             <h1>Landing Page</h1>
         </div>
     )

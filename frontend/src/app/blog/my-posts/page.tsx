@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from 'sonner';
 
+
+// Define Post interface based from backend
 interface Post {
   id: number;
   title: string;
@@ -35,6 +37,7 @@ interface Post {
 }
 
 export default function MyPostsPage() {
+    // TODO: Use redux or zustand for state management
   const router = useRouter();
   const { isAuthenticated, loading: authLoading } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
@@ -86,6 +89,7 @@ export default function MyPostsPage() {
     setShowDeleteDialog(true);
   };
 
+  // Delete post
   const handleDelete = async () => {
     if (!postToDelete) return;
 

@@ -46,6 +46,7 @@ export function Navbar() {
     router.push("/register");
   };
 
+  // For the UI
   return (
     <header className="sticky top-0 z-40 w-full bg-background/80 backdrop-blur-md backdrop-saturate-150 py-4 mt-1 shadow-sm">
       <div className="mx-auto px-0 flex items-center justify-between max-w-[90%]">
@@ -152,7 +153,7 @@ export function Navbar() {
                     <DropdownMenuItem className="px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
                     Profile
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       className="px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                       onClick={() => router.push('/blog/my-posts')}
                     >

@@ -25,7 +25,7 @@ export async function loginUser(credentials: LoginCredentials) {
       const errorData = await response.json();
       errorMessage = errorData.error || errorData.message || errorMessage;
       console.error('Login error details:', errorData);
-    } catch (e) {
+    } catch (e: unknown) {
       // If response is not JSON, try to get text
       try {
         const errorText = await response.text();
@@ -60,7 +60,7 @@ export async function registerUser(userData: { username: string; email: string; 
         } else if (errorData.message) {
           errorMessage = errorData.message;
         }
-        
+
         // Log the full error details for debugging
         console.error('Registration error details:', errorData);
       } catch (e) {
@@ -195,7 +195,7 @@ export async function createPost(token: string, postData: { title: string; conte
     });
 
     console.log('Response status:', response.status);
-    
+
     if (!response.ok) {
       let errorMessage = 'Failed to create post';
       try {
@@ -232,18 +232,18 @@ export async function updatePost(token: string, id: string, postData: { title?: 
 
   if (!response.ok) {
     let errorMessage = 'Failed to update post';
-    
+
     try {
       const errorData = await response.json();
-      
+
       if (response.status === 403) {
         errorMessage = 'You do not have permission to update this post';
       } else {
         errorMessage = errorData.error || errorData.message || errorMessage;
       }
-      
+
       console.error('Update post error details:', errorData);
-    } catch (e) {
+    } catch (e: unknown) {
       // If response is not JSON, try to get text
       try {
         const errorText = await response.text();
@@ -257,7 +257,7 @@ export async function updatePost(token: string, id: string, postData: { title?: 
         }
       }
     }
-    
+
     throw new Error(errorMessage);
   }
 
@@ -275,18 +275,18 @@ export async function deletePost(token: string, id: string) {
 
   if (!response.ok) {
     let errorMessage = 'Failed to delete post';
-    
+
     try {
       const errorData = await response.json();
-      
+
       if (response.status === 403) {
         errorMessage = 'You do not have permission to delete this post';
       } else {
         errorMessage = errorData.error || errorData.message || errorMessage;
       }
-      
+
       console.error('Delete post error details:', errorData);
-    } catch (e) {
+    } catch (e: unknown) {
       // If response is not JSON, try to get text
       try {
         const errorText = await response.text();
@@ -300,7 +300,7 @@ export async function deletePost(token: string, id: string) {
         }
       }
     }
-    
+
     throw new Error(errorMessage);
   }
 
